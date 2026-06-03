@@ -2,7 +2,7 @@
 
 :root {
   --font-serif: 'Playfair Display', Georgia, serif;
-  --font-sans: 'Outfit', 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  --font-sans: 'Outfit', 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   --green-900: #124925;
   --green-700: #1e5f34;
   --green-200: #eef9ef;

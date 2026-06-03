@@ -31,6 +31,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background: linear-gradient(180deg, var(--bg) 0%, #f6fbf6 60%);
   color: var(--green-900);
+  line-height: 1.6;
 }
 
 .app {
@@ -70,6 +71,7 @@ body {
   font-size: 1.9rem;
   font-weight: 800;
   letter-spacing: -0.04em;
+  line-height: 1.2;
 }
 
 ..close-btn {
@@ -97,9 +99,11 @@ body {
   cursor: pointer;
   text-align: left;
   font-size: 0.96rem;
+  line-height: 1.5;
   transition: transform 0.25s ease, background 0.25s ease;
   font-weight: 600;
   backdrop-filter: blur(12px);
+  letter-spacing: 0.01em;
 }
 
 .nav-item:hover {

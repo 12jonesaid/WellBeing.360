@@ -20,6 +20,8 @@
   font-size: 24px;
   color: #333;
   font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
 }
 
 .form-header svg {
@@ -54,11 +56,15 @@ form {
 
 .estimate-heading strong {
   font-size: 0.98rem;
+  line-height: 1.5;
+  letter-spacing: 0.01em;
 }
 
 .estimate-heading span {
   font-size: 0.9rem;
   color: #475569;
+  line-height: 1.5;
+  letter-spacing: 0.01em;
 }
 
 .estimate-buttons {
@@ -74,6 +80,8 @@ form {
   border-radius: 10px;
   padding: 0.85rem 0.9rem;
   font-size: 0.9rem;
+  line-height: 1.5;
+  letter-spacing: 0.01em;
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -95,7 +103,8 @@ form {
   font-weight: 600;
   margin-bottom: 8px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.05em;
+  line-height: 1.5;
 }
 
 .form-group input,

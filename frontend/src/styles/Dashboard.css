@@ -29,7 +29,8 @@
 .greeting-row h1 {
   font-size: clamp(2.2rem, 2.6vw, 3.2rem);
   margin: 0;
-  line-height: 1.05;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
 }
 
 .verified-check {
@@ -49,7 +50,8 @@
   margin-top: 0.75rem;
   color: #475569;
   font-size: 1rem;
-  line-height: 1.7;
+  line-height: 1.8;
+  letter-spacing: 0.015em;
   max-width: 620px;
 }
 
@@ -158,9 +160,10 @@
 .card-header-row h3 {
   font-size: 1rem;
   font-weight: 700;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   opacity: 0.9;
+  line-height: 1.5;
 }
 
 .badge-pill {
@@ -413,11 +416,15 @@
   color: white;
   font-size: 1.05rem;
   font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: 0.01em;
 }
 
 .meal-calories {
   color: #86efac;
   font-size: 0.95rem;
+  line-height: 1.6;
+  letter-spacing: 0.01em;
 }
 
 .meal-add-btn {
@@ -485,6 +492,8 @@
   font-size: 1.6rem;
   margin-bottom: 1.25rem;
   font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
 }
 
 .stats-badges-grid {
@@ -521,17 +530,23 @@
   margin: 0 0 0.35rem;
   font-size: 1rem;
   color: #0f172a;
+  line-height: 1.5;
+  letter-spacing: 0.01em;
 }
 
 .badge-value {
   font-size: 1.25rem;
   font-weight: 800;
   color: #111827;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
 }
 
 .badge-sub {
   margin: 0.35rem 0 0;
   color: #475569;
+  line-height: 1.5;
+  letter-spacing: 0.01em;
 }
 
 .promo-left {

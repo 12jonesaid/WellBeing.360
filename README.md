@@ -8,7 +8,9 @@ A full-stack web application for tracking fitness, nutrition, and mental health 
 ✅ **Nutrition Logging** - Track meals and macronutrients (protein, carbs, fats)
 ✅ **Mood Tracking** - Record daily mood on a 1-10 scale with focus time tracking
 ✅ **Statistics Dashboard** - View comprehensive stats and progress over time
-✅ **User Authentication** - Secure login and registration
+✅ **Secure Authentication** - Email validation and user login/registration
+✅ **Google OAuth Sign-In** - One-click login with verified Google accounts
+✅ **Real Email Validation** - Ensures valid email addresses using validator library
 ✅ **Responsive Design** - Works seamlessly on desktop and mobile devices
 
 ## Tech Stack
@@ -17,10 +19,13 @@ A full-stack web application for tracking fitness, nutrition, and mental health 
 - **React 18** - UI framework
 - **Lucide React** - Icon library
 - **Axios** - HTTP client
+- **Google OAuth** - Secure Google sign-in
 - **CSS3** - Styling with gradients and animations
 
 ### Backend
 - **Node.js & Express** - REST API server
+- **Google Auth Library** - OAuth token verification
+- **Validator** - Email validation library
 - **CORS** - Cross-origin resource sharing
 - **Dotenv** - Environment configuration
 

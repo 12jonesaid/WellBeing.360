@@ -13,6 +13,9 @@ export const register = (name, email, password) =>
 export const login = (email, password) =>
   api.post('/api/auth/login', { email, password });
 
+export const googleLogin = (tokenId) =>
+  api.post('/api/auth/google', { tokenId });
+
 export const getUserProfile = (userId) =>
   api.get(`/api/auth/profile/${userId}`);
 

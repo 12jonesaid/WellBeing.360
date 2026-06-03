@@ -40,6 +40,7 @@ function App() {
 
   const handleLogout = () => {
     localStorage.removeItem('user');
+    localStorage.removeItem('authToken');
     setUser(null);
     setPage('home');
     setActiveTab('dashboard');

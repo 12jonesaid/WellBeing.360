@@ -38,6 +38,12 @@ export default function Login({ onLogin, onBack, defaultMode = 'login' }) {
       return;
     }
 
+    // Validate password length
+    if (mode === 'register' && password.length < 6) {
+      setError('Password must be at least 6 characters');
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -45,7 +51,13 @@ export default function Login({ onLogin, onBack, defaultMode = 'login' }) {
         ? await api.login(email, password)
         : await api.register(name, email, password);
 
-      onLogin(response.data);
+      // Save token to localStorage
+      if (response.data.token) {
+        localStorage.setItem('authToken', response.data.token);
+      }
+
+      // Call onLogin with user data
+      onLogin(response.data.user || response.data);
     } catch (err) {
       setError(err.response?.data?.error || err.response?.data?.message || 'Unable to authenticate. Please try again.');
     } finally {
@@ -59,7 +71,14 @@ export default function Login({ onLogin, onBack, defaultMode = 'login' }) {
 
     try {
       const response = await api.googleLogin(credentialResponse.credential);
-      onLogin(response.data);
+      
+      // Save token to localStorage
+      if (response.data.token) {
+        localStorage.setItem('authToken', response.data.token);
+      }
+
+      // Call onLogin with user data
+      onLogin(response.data.user || response.data);
     } catch (err) {
       setError(err.response?.data?.error || 'Google authentication failed. Please try again.');
     } finally {

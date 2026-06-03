@@ -6,6 +6,17 @@ const api = axios.create({
   baseURL: API_URL
 });
 
+// Add JWT token to requests
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('authToken');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+}, (error) => {
+  return Promise.reject(error);
+});
+
 // Auth
 export const register = (name, email, password) =>
   api.post('/api/auth/register', { name, email, password });

@@ -1,45 +1,63 @@
 import React, { useState, useEffect } from 'react';
+import * as api from '../utils/api';
 import '../styles/DetailPages.css';
 
 export default function MoodDetailPage({ user, onNavigate }) {
   const [moodEntries, setMoodEntries] = useState([]);
   const [newMood, setNewMood] = useState('5');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Load mood data from localStorage
-    const savedData = localStorage.getItem(`user_${user.id}_mood`) || '[]';
-    setMoodEntries(JSON.parse(savedData));
+    fetchMoodData();
   }, [user.id]);
 
-  const handleAddMood = () => {
+  const fetchMoodData = async () => {
+    try {
+      setLoading(true);
+      const response = await api.getUserMood(user.id);
+      setMoodEntries(response.data || []);
+    } catch (error) {
+      console.error('Error fetching mood data:', error);
+      setMoodEntries([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAddMood = async () => {
     if (!newMood) return;
-    const entry = {
-      id: Date.now(),
-      mood: parseInt(newMood),
-      date: new Date().toLocaleDateString(),
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    };
-    const updated = [entry, ...moodEntries];
-    setMoodEntries(updated);
-    localStorage.setItem(`user_${user.id}_mood`, JSON.stringify(updated));
-    setNewMood('5');
+    
+    try {
+      await api.addMood(user.id, {
+        mood: 'logged',
+        rating: parseInt(newMood),
+        activities: '',
+        notes: ''
+      });
+      
+      // Refresh the data
+      await fetchMoodData();
+      setNewMood('5');
+    } catch (error) {
+      console.error('Error logging mood:', error);
+    }
   };
 
   const moodLabels = {
     1: '😢 Very Poor',
     2: '😟 Poor',
     3: '😐 Neutral',
-    4: '🙂 Good',
-    5: '😊 Great',
-    6: '😄 Excellent',
-    7: '😍 Amazing',
-    8: '🤩 Outstanding',
-    9: '🥳 Euphoric',
-    10: '🌟 Perfect'
+    4: '🙂 Okay',
+    5: '😊 Good',
+    6: '😄 Very Good',
+    7: '😆 Excellent',
+    8: '😍 Amazing',
+    9: '🤩 Awesome',
+    10: '🎉 Outstanding'
   };
 
   const averageMood = moodEntries.length > 0 
-    ? (moodEntries.reduce((sum, entry) => sum + entry.mood, 0) / moodEntries.length).toFixed(1)
+    ? (moodEntries.reduce((sum, entry) => sum + (entry.rating || 0), 0) / moodEntries.length).toFixed(1)
     : 0;
 
   return (
@@ -100,26 +118,47 @@ export default function MoodDetailPage({ user, onNavigate }) {
 
       <div className="entries-section">
         <h2>Recent Mood Entries</h2>
-        {moodEntries.length === 0 ? (
+        {loading ? (
+          <div className="empty-state">
+            <p>Loading mood entries...</p>
+          </div>
+        ) : moodEntries.length === 0 ? (
           <div className="empty-state">
             <p>No mood entries yet. Start tracking to see your patterns!</p>
           </div>
         ) : (
           <div className="entries-list">
-            {moodEntries.map((entry) => (
-              <div key={entry.id} className="entry-item mood-entry">
-                <div className="entry-left">
-                  <div className="entry-emoji">{moodLabels[entry.mood].split(' ')[0]}</div>
+            {moodEntries.map((entry, idx) => {
+              const entryDate = new Date(entry.date);
+              const formattedDate = entryDate.toLocaleDateString('en-US', { 
+                weekday: 'short',
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric' 
+              });
+              const formattedTime = entryDate.toLocaleTimeString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                hour12: true
+              });
+              
+              return (
+                <div key={entry.id || idx} className="entry-item mood-entry">
+                  <div className="entry-left">
+                    <div className="entry-emoji">{moodLabels[entry.rating].split(' ')[0]}</div>
+                  </div>
+                  <div className="entry-middle">
+                    <p className="entry-text">{moodLabels[entry.rating]}</p>
+                    <p className="entry-date">{formattedDate} at {formattedTime}</p>
+                    {entry.activities && <p className="entry-notes">{entry.activities}</p>}
+                    {entry.notes && <p className="entry-notes">{entry.notes}</p>}
+                  </div>
+                  <div className="entry-right">
+                    <span className="entry-value">{entry.rating}/10</span>
+                  </div>
                 </div>
-                <div className="entry-middle">
-                  <p className="entry-text">{moodLabels[entry.mood]}</p>
-                  <p className="entry-date">{entry.date} at {entry.time}</p>
-                </div>
-                <div className="entry-right">
-                  <span className="entry-value">{entry.mood}/10</span>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

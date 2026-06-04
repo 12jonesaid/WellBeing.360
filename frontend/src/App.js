@@ -157,7 +157,7 @@ function App() {
           </header>
 
           <div className="content">
-            {activeTab === 'dashboard' && <Dashboard key={refreshKey} user={user} onNavigate={setActiveTab} />}
+            {activeTab === 'dashboard' && <Dashboard user={user} onNavigate={setActiveTab} refreshKey={refreshKey} />}
             {activeTab === 'workout' && <WorkoutForm user={user} onSuccess={handleFormSuccess} />}
             {activeTab === 'nutrition' && <NutritionForm user={user} onSuccess={handleFormSuccess} />}
             {activeTab === 'mood' && <MoodForm user={user} onSuccess={handleFormSuccess} />}

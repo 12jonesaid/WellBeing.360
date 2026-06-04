@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import * as api from '../utils/api';
 
-export default function WellBeing360Dashboard({ user, onNavigate }) {
+export default function WellBeing360Dashboard({ user, onNavigate, refreshKey }) {
   const [moodData, setMoodData] = useState([]);
   const [nutritionData, setNutritionData] = useState([]);
   const [workoutData, setWorkoutData] = useState([]);
@@ -13,11 +13,26 @@ export default function WellBeing360Dashboard({ user, onNavigate }) {
     
     try {
       setLoading(true);
+      console.log('📊 Fetching data for user:', user.id);
+      
       const [moodRes, nutritionRes, workoutRes] = await Promise.all([
-        api.getUserMood(user.id).catch(() => ({ data: [] })),
-        api.getUserNutrition(user.id).catch(() => ({ data: [] })),
-        api.getUserWorkouts(user.id).catch(() => ({ data: [] }))
+        api.getUserMood(user.id).catch((err) => {
+          console.error('❌ Mood API error:', err.message);
+          return { data: [] };
+        }),
+        api.getUserNutrition(user.id).catch((err) => {
+          console.error('❌ Nutrition API error:', err.message);
+          return { data: [] };
+        }),
+        api.getUserWorkouts(user.id).catch((err) => {
+          console.error('❌ Workout API error:', err.message);
+          return { data: [] };
+        })
       ]);
+
+      console.log('✅ Mood data:', moodRes.data);
+      console.log('✅ Nutrition data:', nutritionRes.data);
+      console.log('✅ Workout data:', workoutRes.data);
 
       setMoodData(moodRes.data || []);
       setNutritionData(nutritionRes.data || []);
@@ -31,7 +46,7 @@ export default function WellBeing360Dashboard({ user, onNavigate }) {
 
   useEffect(() => {
     fetchUserData();
-  }, [user?.id]);
+  }, [user?.id, refreshKey]);
 
   // Calculate mood stats
   const todayMood = moodData.length > 0 ? moodData[moodData.length - 1] : null;

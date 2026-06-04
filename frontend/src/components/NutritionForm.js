@@ -50,6 +50,16 @@ export default function NutritionForm({ user, onSuccess }) {
     setLoading(true);
 
     try {
+      console.log('📤 Submitting nutrition:', {
+        userId: user.id,
+        mealType: formData.meal,
+        food: formData.description || 'Meal entry',
+        calories: parseInt(formData.calories) || 0,
+        protein: parseInt(formData.protein) || 0,
+        carbs: parseInt(formData.carbs) || 0,
+        fat: parseInt(formData.fat) || 0
+      });
+
       await api.addNutrition(user.id, {
         mealType: formData.meal,
         food: formData.description || 'Meal entry',
@@ -58,10 +68,12 @@ export default function NutritionForm({ user, onSuccess }) {
         carbs: parseInt(formData.carbs) || 0,
         fat: parseInt(formData.fat) || 0
       });
+      
+      console.log('✅ Nutrition submitted successfully');
       setFormData({ meal: 'breakfast', description: '', calories: '', protein: '', carbs: '', fat: '' });
       onSuccess?.();
     } catch (err) {
-      console.error('Error adding nutrition:', err);
+      console.error('❌ Error adding nutrition:', err.response?.data || err.message);
     } finally {
       setLoading(false);
     }

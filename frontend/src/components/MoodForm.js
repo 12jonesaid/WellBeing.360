@@ -40,16 +40,26 @@ export default function MoodForm({ user, onSuccess }) {
     setLoading(true);
 
     try {
+      console.log('📤 Submitting mood:', {
+        userId: user.id,
+        mood: 'logged',
+        rating: parseInt(formData.mood),
+        activities: formData.focusTime ? `Focus time: ${formData.focusTime} min` : '',
+        notes: formData.notes
+      });
+
       await api.addMood(user.id, {
         mood: 'logged',
         rating: parseInt(formData.mood),
         activities: formData.focusTime ? `Focus time: ${formData.focusTime} min` : '',
         notes: formData.notes
       });
+      
+      console.log('✅ Mood submitted successfully');
       setFormData({ mood: 7, focusTime: '', notes: '' });
       onSuccess?.();
     } catch (err) {
-      console.error('Error adding mood:', err);
+      console.error('❌ Error adding mood:', err.response?.data || err.message);
     } finally {
       setLoading(false);
     }

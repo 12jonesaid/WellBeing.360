@@ -54,12 +54,31 @@ export default function Login({ onLogin, onBack, defaultMode = 'login' }) {
       // Save token to localStorage
       if (response.data.token) {
         localStorage.setItem('authToken', response.data.token);
+        console.log('✅ Authentication successful, token saved');
       }
 
       // Call onLogin with user data
       onLogin(response.data.user || response.data);
     } catch (err) {
-      setError(err.response?.data?.error || err.response?.data?.message || 'Unable to authenticate. Please try again.');
+      // Log detailed error for debugging
+      console.error('❌ Authentication error:', err);
+      
+      let errorMessage = 'Unable to authenticate. Please try again.';
+      
+      // Check for specific error messages
+      if (err.response?.data?.error) {
+        errorMessage = err.response.data.error;
+      } else if (err.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      } else if (err.message === 'Network Error') {
+        errorMessage = 'Cannot connect to server. Check that the backend is running and accessible.';
+      } else if (err.code === 'ERR_NETWORK') {
+        errorMessage = 'Network error: Backend server may be down or unreachable.';
+      } else if (err.response?.status === 0) {
+        errorMessage = 'Connection refused: Backend server is not accessible.';
+      }
+      
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -75,11 +94,13 @@ export default function Login({ onLogin, onBack, defaultMode = 'login' }) {
       // Save token to localStorage
       if (response.data.token) {
         localStorage.setItem('authToken', response.data.token);
+        console.log('✅ Google authentication successful, token saved');
       }
 
       // Call onLogin with user data
       onLogin(response.data.user || response.data);
     } catch (err) {
+      console.error('❌ Google authentication error:', err);
       setError(err.response?.data?.error || 'Google authentication failed. Please try again.');
     } finally {
       setLoading(false);

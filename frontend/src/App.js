@@ -22,6 +22,7 @@ function App() {
   const [page, setPage] = useState('home');
   const [activeTab, setActiveTab] = useState('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     const savedUser = localStorage.getItem('user');
@@ -48,6 +49,7 @@ function App() {
   };
 
   const handleFormSuccess = () => {
+    setRefreshKey(prev => prev + 1);
     setActiveTab('dashboard');
   };
 
@@ -155,7 +157,7 @@ function App() {
           </header>
 
           <div className="content">
-            {activeTab === 'dashboard' && <Dashboard user={user} onNavigate={setActiveTab} />}
+            {activeTab === 'dashboard' && <Dashboard key={refreshKey} user={user} onNavigate={setActiveTab} />}
             {activeTab === 'workout' && <WorkoutForm user={user} onSuccess={handleFormSuccess} />}
             {activeTab === 'nutrition' && <NutritionForm user={user} onSuccess={handleFormSuccess} />}
             {activeTab === 'mood' && <MoodForm user={user} onSuccess={handleFormSuccess} />}

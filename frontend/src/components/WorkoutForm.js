@@ -30,7 +30,8 @@ export default function WorkoutForm({ user, onSuccess }) {
         type: formData.type,
         duration: parseInt(formData.duration),
         calories: parseInt(formData.calories) || 0,
-        description: formData.description
+        intensity: 'moderate',
+        notes: formData.description
       });
       setFormData({ type: 'yoga', duration: '', calories: '', description: '' });
       onSuccess?.();

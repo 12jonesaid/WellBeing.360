@@ -1,6 +1,62 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import * as api from '../utils/api';
 
 export default function WellBeing360Dashboard({ user, onNavigate }) {
+  const [moodData, setMoodData] = useState([]);
+  const [nutritionData, setNutritionData] = useState([]);
+  const [workoutData, setWorkoutData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch all user data
+  const fetchUserData = async () => {
+    if (!user?.id) return;
+    
+    try {
+      setLoading(true);
+      const [moodRes, nutritionRes, workoutRes] = await Promise.all([
+        api.getUserMood(user.id).catch(() => ({ data: [] })),
+        api.getUserNutrition(user.id).catch(() => ({ data: [] })),
+        api.getUserWorkouts(user.id).catch(() => ({ data: [] }))
+      ]);
+
+      setMoodData(moodRes.data || []);
+      setNutritionData(nutritionRes.data || []);
+      setWorkoutData(workoutRes.data || []);
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserData();
+  }, [user?.id]);
+
+  // Calculate mood stats
+  const todayMood = moodData.length > 0 ? moodData[moodData.length - 1] : null;
+  const averageMood = moodData.length > 0 
+    ? (moodData.reduce((sum, m) => sum + (m.rating || 0), 0) / moodData.length).toFixed(1)
+    : 0;
+
+  // Calculate nutrition stats for today
+  const today = new Date().toISOString().split('T')[0];
+  const todayNutrition = nutritionData.filter(n => {
+    const nDate = new Date(n.date).toISOString().split('T')[0];
+    return nDate === today;
+  });
+  const totalCalories = todayNutrition.reduce((sum, n) => sum + (n.calories || 0), 0);
+
+  // Calculate workout stats for this week
+  const now = new Date();
+  const weekStart = new Date(now);
+  weekStart.setDate(now.getDate() - now.getDay());
+  
+  const thisWeekWorkouts = workoutData.filter(w => {
+    const wDate = new Date(w.date);
+    return wDate >= weekStart;
+  });
+
   const rawName = user?.name || 'Student';
   const displayName = rawName.trim().toLowerCase() === 'james' ? 'Student' : rawName;
 
@@ -44,15 +100,15 @@ export default function WellBeing360Dashboard({ user, onNavigate }) {
         >
           <div className="card-header-row">
             <h3>Daily Mood</h3>
-            <span className="badge-pill progress-badge">0% tracked</span>
+            <span className="badge-pill progress-badge">{moodData.length > 0 ? '100%' : '0%'} tracked</span>
           </div>
           <div className="weight-main-value">
-            <span className="weight-num">0</span>
+            <span className="weight-num">{averageMood}</span>
             <span className="weight-unit">/ 10</span>
           </div>
           <div className="weight-sub-metrics">
-            <span className="weight-diff">No data yet</span>
-            <span className="weight-helper">Start logging your mood to track patterns.</span>
+            <span className="weight-diff">{moodData.length > 0 ? `${moodData.length} entries` : 'No data yet'}</span>
+            <span className="weight-helper">{moodData.length > 0 ? 'Keep tracking your mood patterns.' : 'Start logging your mood to track patterns.'}</span>
           </div>
         </button>
 
@@ -63,17 +119,17 @@ export default function WellBeing360Dashboard({ user, onNavigate }) {
         >
           <div className="card-header-row">
             <h3>Nutrition Balance</h3>
-            <span className="badge-pill calorie-badge">0 kcal</span>
+            <span className="badge-pill calorie-badge">{totalCalories} kcal</span>
           </div>
           <div className="calorie-display-wrap">
             <div>
-              <p className="calorie-num">0</p>
-              <p className="calorie-unit">Calories today</p>
+              <p className="calorie-num">{todayNutrition.length}</p>
+              <p className="calorie-unit">Meals today</p>
             </div>
           </div>
           <div className="weight-sub-metrics">
-            <span className="calorie-left-indicator">No entries yet</span>
-            <span className="calorie-tip">Log your first meal to get started.</span>
+            <span className="calorie-left-indicator">{todayNutrition.length > 0 ? `${totalCalories} calories logged` : 'No entries yet'}</span>
+            <span className="calorie-tip">{todayNutrition.length > 0 ? 'Keep tracking your meals.' : 'Log your first meal to get started.'}</span>
           </div>
         </button>
 
@@ -84,15 +140,15 @@ export default function WellBeing360Dashboard({ user, onNavigate }) {
         >
           <div className="card-header-row">
             <h3>Workout Progress</h3>
-            <span className="badge-pill">0% this week</span>
+            <span className="badge-pill">{thisWeekWorkouts.length > 0 ? '100%' : '0%'} this week</span>
           </div>
           <div className="weight-main-value">
-            <span className="weight-num">0</span>
+            <span className="weight-num">{thisWeekWorkouts.length}</span>
             <span className="weight-unit">Workouts</span>
           </div>
           <div className="weight-sub-metrics">
-            <span className="weight-diff">Ready to start?</span>
-            <span className="weight-helper">Log your first workout to begin tracking.</span>
+            <span className="weight-diff">{thisWeekWorkouts.length > 0 ? 'Great progress!' : 'Ready to start?'}</span>
+            <span className="weight-helper">{thisWeekWorkouts.length > 0 ? 'Keep up the momentum!' : 'Log your first workout to begin tracking.'}</span>
           </div>
         </button>
 
@@ -120,25 +176,25 @@ export default function WellBeing360Dashboard({ user, onNavigate }) {
         <div className="wellbeing-card-header">
           <div>
             <p className="wellbeing-card-label">Weekly wellbeing score</p>
-            <h3>0% of goal reached</h3>
+            <h3>{Math.round((moodData.length / 7) * 100)}% of goal reached</h3>
           </div>
-          <span className="trend-pill">Trend 0%</span>
+          <span className="trend-pill">Trend {moodData.length > 0 ? '+' : ''}0%</span>
         </div>
 
         <div className="progress-content-layout">
           <div className="circular-progress-wrap">
             <svg className="svg-circle-progress" viewBox="0 0 100 100">
               <circle className="circle-bg" cx="50" cy="50" r="40" />
-              <circle className="circle-fill" cx="50" cy="50" r="40" style={{ strokeDashoffset: '251' }} />
+              <circle className="circle-fill" cx="50" cy="50" r="40" style={{ strokeDashoffset: `${251 - ((moodData.length / 7) * 251)}` }} />
             </svg>
             <div className="progress-percentage-label">
-              <span className="percentage-num">0%</span>
+              <span className="percentage-num">{Math.round((moodData.length / 7) * 100)}%</span>
               <span className="percentage-subtext">of your wellbeing goal</span>
             </div>
           </div>
 
           <div className="wellbeing-chart-panel">
-            <p className="weight-trend-label">Start tracking to see your wellness trends and progress.</p>
+            <p className="weight-trend-label">{moodData.length > 0 ? 'Keep tracking to maintain your wellness progress.' : 'Start tracking to see your wellness trends and progress.'}</p>
             <div className="sparkline-chart-container">
               <svg className="sparkline-svg" viewBox="0 0 300 120" preserveAspectRatio="none">
                 <g className="sparkline-grid">

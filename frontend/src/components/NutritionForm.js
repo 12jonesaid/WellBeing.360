@@ -51,13 +51,14 @@ export default function NutritionForm({ user, onSuccess }) {
 
     try {
       await api.addNutrition(user.id, {
-        meal: formData.meal,
-        calories: parseInt(formData.calories),
+        mealType: formData.meal,
+        food: formData.description || 'Meal entry',
+        calories: parseInt(formData.calories) || 0,
         protein: parseInt(formData.protein) || 0,
         carbs: parseInt(formData.carbs) || 0,
         fat: parseInt(formData.fat) || 0
       });
-      setFormData({ meal: 'breakfast', calories: '', protein: '', carbs: '', fat: '' });
+      setFormData({ meal: 'breakfast', description: '', calories: '', protein: '', carbs: '', fat: '' });
       onSuccess?.();
     } catch (err) {
       console.error('Error adding nutrition:', err);

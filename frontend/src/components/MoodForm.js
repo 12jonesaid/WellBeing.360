@@ -41,8 +41,9 @@ export default function MoodForm({ user, onSuccess }) {
 
     try {
       await api.addMood(user.id, {
-        mood: parseInt(formData.mood),
-        focusTime: parseInt(formData.focusTime) || 0,
+        mood: 'logged',
+        rating: parseInt(formData.mood),
+        activities: formData.focusTime ? `Focus time: ${formData.focusTime} min` : '',
         notes: formData.notes
       });
       setFormData({ mood: 7, focusTime: '', notes: '' });
